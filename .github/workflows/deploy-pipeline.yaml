@@ -91,4 +91,14 @@ jobs:
         azcliversion: 2.58.0
         inlineScript: |
           azcopy copy ${{ github.sha }}.zip “https://statfstaste1993.blob.core.windows.net/releases/”   
-   
+  
+    - name: 'Deploy to Azure Functions'
+      uses: Azure/functions-action@v1
+      id: deploy-to-function
+      with:
+          app-name: 'gha1993'
+          slot-name: 'production'
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          scm-do-build-during-deployment: true
+          enable-oryx-build: true
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_1d8c830b7acc4e78a63f7087ed1cbf11 }}
