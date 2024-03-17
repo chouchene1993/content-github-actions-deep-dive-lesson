@@ -70,14 +70,25 @@ jobs:
 
       ##new step to upload a build artifact as part of the release###
       
-    - name: Upload release asset
-      uses: actions/upload-release-asset@v1
-      env:
-         GITHUB_TOKEN: ${{ secrets.github_token }}
+    # - name: Upload release asset
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #      GITHUB_TOKEN: ${{ secrets.github_token }}
+    #   with:
+    #    upload_url: ${{ steps.create_release.outputs.upload_url }}
+    #    asset_path: ./${{ github.sha }}.zip
+    #    asset_name: source_code_with_libraries.zip
+    #    asset_content_type: application/zip
+
+    - name: Azure Login
+      uses: azure/login@v2
       with:
-       upload_url: ${{ steps.create_release.outputs.upload_url }}
-       asset_path: ./${{ github.sha }}.zip
-       asset_name: source_code_with_libraries.zip
-       asset_content_type: application/zip
-       
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: Azure CLI script
+      uses: azure/cli@v2
+      with:
+        azcliversion: 2.58.0
+        inlineScript: |
+          azcopy copy ${{ github.sha }}.zip “https://statfstaste1993.blob.core.windows.net/releases/”   
    
